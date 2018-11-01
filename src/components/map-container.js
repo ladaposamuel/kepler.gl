@@ -23,7 +23,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import MapboxGLMap from 'react-map-gl';
 import DeckGL from 'deck.gl';
-import {GL} from 'luma.gl';
+import GL from 'luma.gl/constants';
 import {registerShaderModules, setParameters} from 'luma.gl';
 import pickingModule from 'shaderlib/picking-module';
 import brushingModule from 'shaderlib/brushing-module';
@@ -40,6 +40,7 @@ import {transformRequest} from 'utils/map-style-utils/mapbox-utils';
 
 // default-settings
 import {LAYER_BLENDINGS} from 'constants/default-settings';
+import ThreeDBuildingLayer from '../deckgl-layers/3d-building-layer/3d-building-layer';
 
 const MAP_STYLE = {
   container: {
@@ -321,6 +322,7 @@ export default function MapContainerFactory(MapPopover, MapControl) {
     _renderOverlay() {
       const {
         mapState,
+        mapStyle,
         layerData,
         layerOrder,
         visStateActions
@@ -335,6 +337,10 @@ export default function MapContainerFactory(MapPopover, MapControl) {
           .slice()
           .reverse()
           .reduce(this._renderLayer, []);
+      }
+      const threeDBuildingLayerId = '3d-building';
+      if (mapStyle.visibleLayerGroups['3d building'] && !deckGlLayers.some(layer => layer.id === threeDBuildingLayerId)) {
+        deckGlLayers.push(new ThreeDBuildingLayer({id: threeDBuildingLayerId, styleType: mapStyle.styleType}));
       }
 
       return (

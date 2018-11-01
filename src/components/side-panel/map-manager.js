@@ -71,7 +71,11 @@ export default class MapManager extends Component {
   render() {
     const {mapStyle} = this.props;
     const editableLayers = mapStyle.visibleLayerGroups;
-
+    const threeDBuilding = "3d building";
+    if (!editableLayers.hasOwnProperty(threeDBuilding)) {
+      editableLayers[threeDBuilding] = false;
+    }
+    
     return (
       <div className="map-style-panel">
         <div>
@@ -191,7 +195,7 @@ const LayerGroupSelector = ({layers, editableLayers, onChange, topLayers}) => (
               className="layer-group__visibility-toggle"
               id={`${slug}-toggle`}
               tooltip={layers[slug] ? 'hide' : 'show'}
-              onClick={() =>
+              onClick={() => 
                 onChange({
                   visibleLayerGroups: {
                     ...layers,
@@ -209,7 +213,7 @@ const LayerGroupSelector = ({layers, editableLayers, onChange, topLayers}) => (
             <PanelHeaderAction
               id={`${slug}-top`}
               tooltip="Move to top of data layers"
-              disabled={!layers[slug]}
+              disabled={!layers[slug] || slug === '3d building'}
               IconComponent={Upload}
               active={topLayers[slug]}
               onClick={() =>
